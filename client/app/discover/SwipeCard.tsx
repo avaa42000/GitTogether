@@ -84,12 +84,13 @@ export function SwipeCard({ developer, onSwipe, isTop, stackIndex }: SwipeCardPr
         >
             {/* Stamps */}
             {isTop && (
-                <motion.div style={{ opacity: likeOpacity }}
-                    className="absolute top-5 left-5 z-20 rotate-[-20deg] text-2xl font-black px-3 py-1 rounded-xl pointer-events-none"
+                <motion.div
                     style={{ opacity: likeOpacity, border: "3px solid #4ade80", color: "#4ade80" } as any}
+                    className="absolute top-5 left-5 z-20 rotate-[-20deg] text-2xl font-black px-3 py-1 rounded-xl pointer-events-none"
                 >
                     LIKE
                 </motion.div>
+
             )}
             {isTop && (
                 <motion.div
