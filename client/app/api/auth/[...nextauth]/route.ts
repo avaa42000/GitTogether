@@ -2,24 +2,6 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import prisma from "@/lib/prisma";
 
-async function fetchReposAndStack(username: string, token: string) {
-    try {
-        const res = await fetch(`https://api.github.com/users/${username}/repos?per_page=30&sort=updated`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
-        const repos = await res.json();
-        if (!Array.isArray(repos)) return { repoData: [], primaryStack: [] };
-
-        const langCount: Record<string, number> = {};
-        const repoData = repos.map((r: any) => {
-            if (r.language) langCount[r.language] = (langCount[r.language] || 0) + 1;
-            return { repoName: r.name, language: r.language || null, stars: r.stargazers_count || 0, forks: r.forks_count || 0, topics: r.topics || [] };
-        });
-        const primaryStack = Object.entries(langCount).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([l]) => l);
-        return { repoData, primaryStack };
-    } catch { return { repoData: [], primaryStack: [] }; }
-}
-
 export const authOptions: NextAuthOptions = {
     providers: [
         GithubProvider({
@@ -33,11 +15,9 @@ export const authOptions: NextAuthOptions = {
         async signIn({ account, profile }) {
             if (account?.provider !== "github") return false;
             try {
-                const { repoData, primaryStack } = await fetchReposAndStack(
-                    (profile as any).login,
-                    account.access_token!
-                );
-                const user = await prisma.user.upsert({
+                // Lightweight sync — just upsert user (no GitHub API repo call)
+                // Repo sync happens lazily on profile page load
+                await prisma.user.upsert({
                     where: { githubId: String((profile as any).id) },
                     update: {
                         username: (profile as any).login,
@@ -45,7 +25,6 @@ export const authOptions: NextAuthOptions = {
                         avatarUrl: (profile as any).avatar_url,
                         bio: (profile as any).bio,
                         location: (profile as any).location,
-                        primaryStack,
                         updatedAt: new Date(),
                     },
                     create: {
@@ -55,15 +34,12 @@ export const authOptions: NextAuthOptions = {
                         avatarUrl: (profile as any).avatar_url,
                         bio: (profile as any).bio,
                         location: (profile as any).location,
-                        primaryStack,
+                        primaryStack: [],
                     },
                 });
-                await prisma.repository.deleteMany({ where: { userId: user.id } });
-                if (repoData.length > 0) {
-                    await prisma.repository.createMany({ data: repoData.map((r) => ({ ...r, userId: user.id })) });
-                }
             } catch (err) {
-                console.error("DB sync failed:", err);
+                console.error("DB sync failed (non-fatal):", err);
+                // Still return true — login succeeds even if DB sync fails
             }
             return true;
         },
