@@ -16,13 +16,13 @@ GitTogether is a platform that brings developers together based on their GitHub 
 
 ## Features
 
-- 🔐 **GitHub OAuth** — one-click sign-in, auto-profile generation
-- ⚡ **Tech Stack Extraction** — analyzes your repos, finds your top languages
-- 🃏 **Swipe Deck** — drag-gesture card matching with Framer Motion
-- 🧠 **Compatibility Score** — 4-factor algorithm (stack overlap, repo domain, activity, intent)
-- 💬 **Real-time Chat** — polling-based messaging with code snippet support
-- 🔒 **Privacy Controls** — hide location, hide dating mode
-- 🎯 **3 Modes** — Networking | Collaboration | Dating
+-  **GitHub OAuth** — one-click sign-in, auto-profile generation
+-  **Tech Stack Extraction** — analyzes your repos, finds your top languages
+-  **Swipe Deck** — drag-gesture card matching with Framer Motion
+-  **Compatibility Score** — 4-factor algorithm (stack overlap, repo domain, activity, intent)
+-  **Real-time Chat** — polling-based messaging with code snippet support
+-  **Privacy Controls** — hide location, hide dating mode
+-  **3 Modes** — Networking | Collaboration | Dating
 
 ---
 
