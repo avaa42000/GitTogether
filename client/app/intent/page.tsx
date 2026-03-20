@@ -2,10 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "@/lib/api";
 import IntentGrid from "@/components/intent/IntentGrid";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function IntentPage() {
     const router = useRouter();
@@ -19,7 +17,7 @@ export default function IntentPage() {
         // Save to localStorage so discover page knows the current mode
         localStorage.setItem("gt_intent", id);
         try {
-            await axios.patch(`${API}/api/users/me`, { intentMode: id }, { withCredentials: true });
+            await api.patch(`/api/users/me`, { intentMode: id });
         } catch { /* non-fatal */ }
         finally {
             setLoading(false);

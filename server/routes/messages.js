@@ -46,6 +46,11 @@ router.post("/:matchId", requireAuth, async (req, res) => {
             data: { matchId, senderId: req.userId, messageText: messageText.trim() },
             include: { sender: { select: { id: true, username: true, avatarUrl: true } } },
         });
+
+        // Emit to socket room
+        const io = req.app.get("io");
+        io.to(matchId).emit("new-message", message);
+
         res.json(message);
     } catch (err) {
         res.status(500).json({ error: err.message });

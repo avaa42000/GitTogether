@@ -47,6 +47,7 @@ router.post("/", requireAuth, async (req, res) => {
             }
         }
 
+        console.log("DEBUG: Swipe result:", { matched: !!match, matchId: match?.id });
         res.json({ success: true, matched: !!match, match });
     } catch (err) {
         res.status(500).json({ error: err.message });

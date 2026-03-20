@@ -10,11 +10,15 @@ export const metadata: Metadata = {
   description: "GitTogether connects developers based on GitHub profiles. Network, collaborate, and vibe through code.",
 };
 
+import AuthSync from "@/components/shared/AuthSync";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-[#0d0f14] text-gray-100 min-h-screen`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthSync>{children}</AuthSync>
+        </Providers>
       </body>
     </html>
   );

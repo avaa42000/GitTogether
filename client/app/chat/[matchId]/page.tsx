@@ -2,13 +2,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/api";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import ChatTopBar from "@/components/chat/ChatTopBar";
 import MessageBubble from "@/components/chat/MessageBubble";
 import ChatInput from "@/components/chat/ChatInput";
 
 
+import { socket } from "@/lib/socket";
 
 export default function ChatPage() {
     const { status } = useSession();
@@ -24,12 +25,12 @@ export default function ChatPage() {
 
     useEffect(() => {
         if (status !== "authenticated") return;
-        axios.get(`/api/users/me`).then((r) => setMyId(r.data.id)).catch(() => { });
+        api.get(`/api/users/me`).then((r) => setMyId(r.data.id)).catch(() => { });
     }, [status]);
 
     const fetchMessages = async () => {
         try {
-            const res = await axios.get(`/api/messages/${matchId}`);
+            const res = await api.get(`/api/messages/${matchId}`);
             setMessages(res.data);
             setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
         } catch { }
@@ -38,14 +39,33 @@ export default function ChatPage() {
     useEffect(() => {
         if (matchId && status === "authenticated") {
             fetchMessages();
-            const t = setInterval(fetchMessages, 3000);
-            return () => clearInterval(t);
+
+            // Socket setup
+            socket.connect();
+            socket.emit("join-room", matchId);
+
+            socket.on("new-message", (newMsg) => {
+                setMessages((prev) => {
+                    if (prev.find(m => m.id === newMsg.id)) return prev;
+                    return [...prev, newMsg];
+                });
+                setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
+            });
+
+            return () => {
+                socket.off("new-message");
+                socket.disconnect();
+            };
         }
     }, [matchId, status]);
 
     const handleSend = async (text: string) => {
-        await axios.post(`/api/messages/${matchId}`, { messageText: text });
-        fetchMessages();
+        try {
+            // Send to DB via API (which will broadcast via socket)
+            await api.post(`/api/messages/${matchId}`, { messageText: text });
+        } catch (err) {
+            console.error("Failed to send message:", err);
+        }
     };
 
     if (status === "loading") return <LoadingSpinner />;

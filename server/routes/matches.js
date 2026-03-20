@@ -27,6 +27,7 @@ router.get("/", requireAuth, async (req, res) => {
             partner: m.user1Id === req.userId ? m.user2 : m.user1,
         }));
 
+        console.log("DEBUG: Formatted matches:", JSON.stringify(formatted, null, 2));
         res.json(formatted);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -52,7 +52,7 @@ router.post("/cookie", async (req, res) => {
         if (!user) return res.status(404).json({ error: "User not synced yet" });
 
         // Sign Express JWT and set cookie + return in body
-        const token = signToken(user.id);
+        const token = signToken({ userId: user.id });
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,

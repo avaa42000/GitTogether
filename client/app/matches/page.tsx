@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/api";
 import Navbar from "@/components/shared/Navbar";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import EmptyState from "@/components/shared/EmptyState";
@@ -20,7 +20,7 @@ export default function MatchesPage() {
 
     useEffect(() => {
         if (status !== "authenticated") return;
-        axios.get(`/api/matches`)
+        api.get(`/api/matches`)
             .then((r) => setMatches(r.data))
             .catch(() => { })
             .finally(() => setLoading(false));

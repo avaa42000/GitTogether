@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import api from "@/lib/api";
 import Navbar from "@/components/shared/Navbar";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import EmptyState from "@/components/shared/EmptyState";
@@ -35,7 +35,7 @@ export default function DiscoverPage() {
     const fetchDeck = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await axios.get(`/api/discover?intent=${intentMode}`);
+            const res = await api.get(`/api/discover?intent=${intentMode}`);
             setDeck(res.data);
         } catch { }
         finally { setLoading(false); }
@@ -46,7 +46,7 @@ export default function DiscoverPage() {
     const handleSwipe = async (targetId: string, swipeType: "like" | "pass" | "superlike") => {
         setDeck((prev) => prev.filter((d) => d.id !== targetId));
         try {
-            const res = await axios.post(`/api/swipes`, { targetId, swipeType });
+            const res = await api.post(`/api/swipes`, { targetId, swipeType });
             if (res.data.matched) {
                 setMatchVisible(true);
                 setTimeout(() => setMatchVisible(false), 4000);
