@@ -28,16 +28,24 @@ export default function ChatPage() {
         api.get(`/api/users/me`).then((r) => setMyId(r.data.id)).catch(() => { });
     }, [status]);
 
+    const [partnerName, setPartnerName] = useState<string>("Chat");
+
     const fetchMessages = async () => {
         try {
             const res = await api.get(`/api/messages/${matchId}`);
             setMessages(res.data);
+            
+            // Get partner name from the first message sent by them or from the match data
+            // For now, let's just fetch it from the first message that's not from me
+            const otherMsg = res.data.find((m: any) => m.sender.id !== myId);
+            if (otherMsg) setPartnerName(otherMsg.sender.name || otherMsg.sender.username);
+
             setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
         } catch { }
     };
 
     useEffect(() => {
-        if (matchId && status === "authenticated") {
+        if (matchId && status === "authenticated" && myId) {
             fetchMessages();
 
             // Socket setup
@@ -57,7 +65,7 @@ export default function ChatPage() {
                 socket.disconnect();
             };
         }
-    }, [matchId, status]);
+    }, [matchId, status, myId]);
 
     const handleSend = async (text: string) => {
         try {
@@ -72,7 +80,7 @@ export default function ChatPage() {
 
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-            <ChatTopBar />
+            <ChatTopBar title={partnerName} matchId={matchId} />
 
             <div style={{ flex: 1, overflowY: "auto", padding: "1.5rem 1rem", display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: 680, margin: "0 auto", width: "100%" }}>
                 {messages.map((msg, i) => (

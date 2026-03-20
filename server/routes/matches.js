@@ -34,4 +34,36 @@ router.get("/", requireAuth, async (req, res) => {
     }
 });
 
+// DELETE /api/matches/:matchId — Unmatch
+router.delete("/:matchId", requireAuth, async (req, res) => {
+    const { matchId } = req.params;
+    try {
+        const match = await prisma.match.findUnique({
+            where: { id: matchId },
+        });
+
+        if (!match) return res.status(404).json({ error: "Match not found" });
+        if (match.user1Id !== req.userId && match.user2Id !== req.userId) {
+            return res.status(403).json({ error: "Unauthorized to unmatch" });
+        }
+
+        // Delete the match (cascades to messages)
+        await prisma.match.delete({ where: { id: matchId } });
+
+        // IMPORTANT: Also delete the reciprocal swipes so they can match again later
+        await prisma.swipe.deleteMany({
+            where: {
+                OR: [
+                    { swiperId: match.user1Id, targetId: match.user2Id },
+                    { swiperId: match.user2Id, targetId: match.user1Id },
+                ],
+            },
+        });
+
+        res.json({ success: true, message: "Unmatched successfully" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;

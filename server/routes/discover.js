@@ -12,18 +12,21 @@ router.get("/", requireAuth, async (req, res) => {
             include: { repositories: true },
         });
 
-        // Get all users this user has already swiped
-        const swiped = await prisma.swipe.findMany({
-            where: { swiperId: req.userId },
+        // Get only users this user has liked/superliked (exclude from pool)
+        const excluded = await prisma.swipe.findMany({
+            where: { 
+                swiperId: req.userId,
+                swipeType: { in: ["like", "superlike"] }
+            },
             select: { targetId: true },
         });
-        const swipedIds = swiped.map((s) => s.targetId);
-        swipedIds.push(req.userId); // exclude self
+        const excludedIds = excluded.map((s) => s.targetId);
+        excludedIds.push(req.userId); // exclude self
 
         // Fetch candidate pool
         const candidates = await prisma.user.findMany({
             where: {
-                id: { notIn: swipedIds },
+                id: { notIn: excludedIds },
                 hideDating: currentUser.intentMode === "dating" ? false : undefined,
             },
             include: { repositories: true },
