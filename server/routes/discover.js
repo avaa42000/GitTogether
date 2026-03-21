@@ -23,15 +23,25 @@ router.get("/", requireAuth, async (req, res) => {
         const excludedIds = excluded.map((s) => s.targetId);
         excludedIds.push(req.userId); // exclude self
 
+        console.log(`🔍 Discover for ${req.userId}: Excluded ${excludedIds.length} users (Likes/Self)`);
+
         // Fetch candidate pool
+        const whereClause = {
+            id: { notIn: excludedIds },
+        };
+
+        // Only apply dating filter if in dating mode
+        if (currentUser.intentMode === "dating") {
+            whereClause.hideDating = false;
+        }
+
         const candidates = await prisma.user.findMany({
-            where: {
-                id: { notIn: excludedIds },
-                hideDating: currentUser.intentMode === "dating" ? false : undefined,
-            },
+            where: whereClause,
             include: { repositories: true },
-            take: 50,
+            take: 100, // Increase pool size for better discovery
         });
+
+        console.log(`✅ Found ${candidates.length} potential candidates`);
 
         // Score and sort
         const scored = candidates
