@@ -25,16 +25,33 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "http://localhost:3001"
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      const isAllowed = allowedOrigins.some(ao => origin.startsWith(ao));
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        console.warn(`⚠️ Socket connection blocked by CORS from origin: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket"], // Force WebSocket for production stability
+  transports: ["websocket", "polling"], // Allow polling as fallback, upgrade to websocket
 });
 
-console.log("🌐 Socket.io configured with origin:", process.env.CLIENT_URL || "http://localhost:3000");
+console.log("🌐 Socket.io initialized. Allowed Origins:", allowedOrigins);
 
 // Attach io to app for access in routes
 app.set("io", io);
@@ -64,7 +81,8 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (matchId) => {
     socket.join(matchId);
-    console.log(`🏠 Socket ${socket.id} joined room: ${matchId}`);
+    const roomSize = io.sockets.adapter.rooms.get(matchId)?.size || 0;
+    console.log(`🏠 Socket ${socket.id} joined room: ${matchId}. Total in room: ${roomSize}`);
   });
 
   socket.on("disconnect", () => {

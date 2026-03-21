@@ -44,33 +44,49 @@ export default function ChatPage() {
         } catch { }
     };
 
+    const [isConnected, setIsConnected] = useState(false);
+
     useEffect(() => {
         if (matchId && status === "authenticated" && myId) {
             fetchMessages();
 
             // Socket setup
-            console.log("🔌 Attempting socket connection to room:", matchId);
+            console.log("🔌 Initializing connection for room:", matchId);
+            socket.io.opts.query = { matchId }; // Optional: pass matchId in query
             socket.connect();
 
-            // Join room once connected
-            socket.on("connect", () => {
-                console.log("📝 Joining room:", matchId);
+            const onConnect = () => {
+                console.log("✅ Socket connected. Joining room:", matchId);
+                setIsConnected(true);
                 socket.emit("join-room", matchId);
-            });
+            };
 
-            socket.on("new-message", (newMsg) => {
+            const onDisconnect = () => {
+                console.log("❌ Socket disconnected.");
+                setIsConnected(false);
+            };
+
+            const onNewMessage = (newMsg: any) => {
                 console.log("📩 New real-time message received:", newMsg);
                 setMessages((prev) => {
                     if (prev.find(m => m.id === newMsg.id)) return prev;
                     return [...prev, newMsg];
                 });
                 setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 80);
-            });
+            };
+
+            socket.on("connect", onConnect);
+            socket.on("disconnect", onDisconnect);
+            socket.on("new-message", onNewMessage);
+
+            // If already connected when effect runs
+            if (socket.connected) onConnect();
 
             return () => {
-                console.log("🔌 Cleaning up socket for room:", matchId);
-                socket.off("connect");
-                socket.off("new-message");
+                console.log("🧹 Cleanup: removing listeners for room:", matchId);
+                socket.off("connect", onConnect);
+                socket.off("disconnect", onDisconnect);
+                socket.off("new-message", onNewMessage);
                 socket.disconnect();
             };
         }
@@ -78,7 +94,6 @@ export default function ChatPage() {
 
     const handleSend = async (text: string) => {
         try {
-            // Send to DB via API (which will broadcast via socket)
             await api.post(`/api/messages/${matchId}`, { messageText: text });
         } catch (err) {
             console.error("Failed to send message:", err);
@@ -90,7 +105,19 @@ export default function ChatPage() {
     return (
         <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
             <ChatTopBar title={partnerName} matchId={matchId} />
-
+            
+            {/* Connection Status Indicator */}
+            {!isConnected && (
+                <div style={{ background: "rgba(232,97,74,0.1)", color: "#e8614a", fontSize: "0.7rem", textAlign: "center", padding: "0.25rem", borderBottom: "1px solid rgba(232,97,74,0.2)" }}>
+                    Connecting to real-time chat...
+                </div>
+            )}
+            {isConnected && (
+                <div style={{ position: "absolute", top: "2.8rem", left: "4.5rem", zIndex: 100, display: "flex", alignItems: "center", gap: "4px" }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 8px #4ade80" }} />
+                    <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.5)", fontWeight: 500 }}>Live</span>
+                </div>
+            )}
             <div style={{ flex: 1, overflowY: "auto", padding: "1.5rem 1rem", display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: 680, margin: "0 auto", width: "100%" }}>
                 {messages.map((msg, i) => (
                     <MessageBubble
