@@ -11,45 +11,37 @@ interface EmptyStateProps {
 
 export default function EmptyState({ emoji, title, subtitle, actionLabel, actionHref, onAction }: EmptyStateProps) {
     return (
-        <div style={{
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)",
-            borderRadius: "1rem",
-            padding: "3rem",
+        <div className="gt-card" style={{
+            padding: "3.5rem 2rem",
             textAlign: "center",
-            maxWidth: 400,
+            maxWidth: 420,
             margin: "0 auto",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "0.5rem",
         }}>
-            <p style={{ fontSize: "2.5rem", marginBottom: "0.75rem" }}>{emoji}</p>
-            <p style={{ fontWeight: 700, color: "white", marginBottom: "0.4rem" }}>{title}</p>
-            <p style={{ fontSize: "0.875rem", color: "var(--muted)" }}>{subtitle}</p>
+            <p style={{ fontSize: "3rem", marginBottom: "0.5rem", filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.2))" }}>{emoji}</p>
+            <p style={{ fontWeight: 800, color: "var(--text-primary)", fontSize: "1.2rem", letterSpacing: "-0.01em" }}>{title}</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", opacity: 0.7, lineHeight: 1.5 }}>{subtitle}</p>
 
             {actionLabel && (
                 actionHref ? (
                     <Link href={actionHref}
+                        className="gt-btn-coral"
                         style={{
                             display: "inline-block",
-                            marginTop: "1.25rem",
-                            padding: "0.6rem 1.4rem",
-                            background: "linear-gradient(135deg, #e8614a, #d44a34)",
-                            color: "white",
-                            fontWeight: 600,
-                            fontSize: "0.875rem",
-                            borderRadius: "0.55rem",
+                            marginTop: "1.5rem",
                             textDecoration: "none",
+                            width: "auto",
+                            padding: "0.75rem 2rem",
                         }}
                     >{actionLabel}</Link>
                 ) : (
-                    <button onClick={onAction} style={{
-                        marginTop: "1.25rem",
-                        padding: "0.6rem 1.4rem",
-                        background: "linear-gradient(135deg, #e8614a, #d44a34)",
-                        color: "white",
-                        fontWeight: 600,
-                        fontSize: "0.875rem",
-                        borderRadius: "0.55rem",
-                        border: "none",
-                        cursor: "pointer",
+                    <button onClick={onAction} className="gt-btn-coral" style={{
+                        marginTop: "1.5rem",
+                        width: "auto",
+                        padding: "0.75rem 2rem",
                     }}>{actionLabel}</button>
                 )
             )}

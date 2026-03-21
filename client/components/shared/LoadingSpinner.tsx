@@ -1,14 +1,14 @@
-// Shared LoadingSpinner component
 export default function LoadingSpinner() {
     return (
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--bg-main)" }}>
             <div style={{
-                width: 40,
-                height: 40,
-                border: "4px solid rgba(232,97,74,0.25)",
-                borderTopColor: "#e8614a",
+                width: 48,
+                height: 48,
+                border: "3px solid rgba(255, 107, 154, 0.15)",
+                borderTopColor: "var(--accent-pink)",
                 borderRadius: "50%",
-                animation: "spin 0.75s linear infinite",
+                animation: "spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite",
+                boxShadow: "0 0 15px var(--accent-glow)",
             }} />
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>

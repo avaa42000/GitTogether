@@ -23,7 +23,7 @@ const LANG_COLORS: Record<string, string> = {
 };
 
 export default function RepoCard({ repo, index, username }: RepoCardProps) {
-    const langColor = LANG_COLORS[repo.language || ""] || "#e8614a";
+    const langColor = LANG_COLORS[repo.language || ""] || "var(--accent-pink)";
 
     return (
         <motion.a
@@ -33,50 +33,50 @@ export default function RepoCard({ repo, index, username }: RepoCardProps) {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.04 }}
-            whileHover={{ y: -2 }}
+            className="gt-card"
             style={{
                 display: "block",
                 textDecoration: "none",
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "0.75rem",
-                padding: "1rem 1.1rem",
-                transition: "border-color 0.15s",
+                padding: "1.25rem",
+                transition: "all 0.2s ease",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(232,97,74,0.35)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border)")}
         >
             {/* Repo name */}
-            <p style={{ fontWeight: 700, color: "#e8614a", fontSize: "0.9rem", marginBottom: "0.3rem" }}>
-                📁 {repo.repoName}
+            <p style={{ fontWeight: 800, color: "var(--accent-pink)", fontSize: "0.95rem", marginBottom: "0.5rem" }}>
+                {repo.repoName}
             </p>
 
             {/* Topics */}
             {repo.topics.length > 0 && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem", marginBottom: "0.6rem" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.75rem" }}>
                     {repo.topics.slice(0, 3).map((t) => (
                         <span key={t} style={{
-                            fontSize: "0.68rem",
+                            fontSize: "0.7rem",
+                            fontWeight: 500,
                             padding: "0.15rem 0.5rem",
-                            borderRadius: "999px",
-                            background: "rgba(232,97,74,0.08)",
-                            color: "rgba(255,255,255,0.55)",
-                            border: "1px solid rgba(232,97,74,0.2)",
+                            borderRadius: "0.4rem",
+                            background: "rgba(255,255,255,0.03)",
+                            color: "var(--text-secondary)",
+                            border: "1px solid var(--card-border)",
                         }}>{t}</span>
                     ))}
                 </div>
             )}
 
             {/* Footer: lang + stars + forks */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "auto", opacity: 0.8 }}>
                 {repo.language && (
-                    <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.78rem", color: langColor }}>
-                        <span style={{ width: 10, height: 10, borderRadius: "50%", background: langColor, display: "inline-block" }} />
+                    <span style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.8rem", color: langColor, fontWeight: 600 }}>
+                        <span style={{ width: 8, height: 8, borderRadius: "50%", background: langColor, display: "inline-block" }} />
                         {repo.language}
                     </span>
                 )}
-                <span style={{ fontSize: "0.78rem", color: "var(--muted)" }}>⭐ {repo.stars}</span>
-                <span style={{ fontSize: "0.78rem", color: "var(--muted)" }}>🍴 {repo.forks}</span>
+                <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span style={{opacity: 0.5}}>⭐</span> {repo.stars}
+                </span>
+                <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <span style={{opacity: 0.5}}>🍴</span> {repo.forks}
+                </span>
             </div>
         </motion.a>
     );

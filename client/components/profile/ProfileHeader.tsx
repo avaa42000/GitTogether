@@ -22,12 +22,12 @@ interface ProfileHeaderProps {
 }
 
 const INTENT_LABELS: Record<string, string> = {
-    networking: "💼 Professional Networking",
-    collab: "🚀 Project Collaboration",
-    hackathon: "🏆 Hackathon Partner",
-    learning: "📚 Learning Buddy",
-    dating: "💝 Dating Mode",
-    casual: "🎮 Casual Dev Connect",
+    networking: "Professional Networking",
+    collab: "Project Collaboration",
+    hackathon: "Hackathon Partner",
+    learning: "Learning Buddy",
+    dating: "Dating Mode",
+    casual: "Casual Dev Connect",
 };
 
 const LANG_COLORS: Record<string, string> = {
@@ -43,44 +43,45 @@ export default function ProfileHeader({ avatarUrl, name, username, bio, location
         <motion.div
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
+            className="gt-card"
             style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-                borderRadius: "1rem",
                 overflow: "hidden",
                 width: "100%",
+                padding: 0,
             }}
         >
             {/* Banner */}
             <div style={{
-                height: 120,
-                background: "linear-gradient(135deg, rgba(180,40,60,0.6), rgba(100,20,80,0.4), rgba(180,40,60,0.3))",
+                height: 140,
+                background: "linear-gradient(135deg, #1e1e1e 0%, rgba(255,107,154,0.1) 50%, #1e1e1e 100%)",
+                borderBottom: "1px solid var(--card-border)",
             }} />
 
             {/* Avatar + info */}
-            <div style={{ padding: "0 1.5rem 1.5rem", position: "relative" }}>
+            <div style={{ padding: "0 1.75rem 1.75rem", position: "relative" }}>
                 {/* Avatar overlapping banner */}
-                <div style={{ position: "relative", marginTop: -48 }}>
+                <div style={{ position: "relative", marginTop: -50 }}>
                     <img
-                        src={avatarUrl || `https://ui-avatars.com/api/?name=${username}&background=3a1020&color=e8614a&size=128`}
+                        src={avatarUrl || `https://ui-avatars.com/api/?name=${username}\u0026background=242424\u0026color=FF6B9A\u0026size=128`}
                         alt={username}
                         style={{
-                            width: 96, height: 96,
-                            borderRadius: "1rem",
-                            border: "3px solid var(--bg-card)",
-                            boxShadow: "0 4px 20px rgba(0,0,0,0.4)",
+                            width: 100, height: 100,
+                            borderRadius: "1.25rem",
+                            border: "4px solid var(--bg-card)",
+                            boxShadow: "0 8px 30px rgba(0,0,0,0.3)",
+                            objectCover: "cover",
                         }}
                     />
                 </div>
 
                 {/* Name */}
-                <div style={{ marginTop: "0.75rem" }}>
-                    <h1 style={{ fontSize: "1.4rem", fontWeight: 800, color: "white" }}>{name || username}</h1>
+                <div style={{ marginTop: "1rem" }}>
+                    <h1 style={{ fontSize: "1.6rem", fontBlack: 900, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{name || username}</h1>
                     <a
                         href={githubStats.githubUrl || `https://github.com/${username}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ fontSize: "0.875rem", color: "#e8614a", textDecoration: "none" }}
+                        style={{ fontSize: "0.95rem", color: "var(--accent-pink)", textDecoration: "none", fontWeight: 600 }}
                     >
                         @{username}
                     </a>
@@ -88,67 +89,55 @@ export default function ProfileHeader({ avatarUrl, name, username, bio, location
 
                 {/* Bio */}
                 {bio && (
-                    <p style={{ marginTop: "0.75rem", fontSize: "0.9rem", color: "rgba(255,255,255,0.7)", lineHeight: 1.55 }}>
+                    <p style={{ marginTop: "1rem", fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.6, opacity: 0.9 }}>
                         {bio}
                     </p>
                 )}
 
                 {/* Meta info */}
-                <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
-                    {location && <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>📍 {location}</span>}
-                    {githubStats.company && <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>🏢 {githubStats.company}</span>}
-                    {githubStats.blog && (
-                        <a href={githubStats.blog.startsWith("http") ? githubStats.blog : `https://${githubStats.blog}`}
-                            target="_blank" rel="noopener noreferrer"
-                            style={{ fontSize: "0.8rem", color: "#e8614a", textDecoration: "none" }}>
-                            🔗 {githubStats.blog}
-                        </a>
-                    )}
-                    {githubStats.twitterUsername && (
-                        <a href={`https://twitter.com/${githubStats.twitterUsername}`} target="_blank" rel="noopener noreferrer"
-                            style={{ fontSize: "0.8rem", color: "#1d9bf0", textDecoration: "none" }}>
-                            𝕏 @{githubStats.twitterUsername}
-                        </a>
-                    )}
-                    {joinYear && <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>📅 Joined {joinYear}</span>}
+                <div style={{ marginTop: "1rem", display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+                    {location && <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", opacity: 0.6 }}>📍 {location}</span>}
+                    {githubStats.company && <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", opacity: 0.6 }}>🏢 {githubStats.company}</span>}
+                    {joinYear && <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)", opacity: 0.6 }}>📅 Joined {joinYear}</span>}
                 </div>
 
                 {/* GitHub Stats */}
                 <div style={{
-                    marginTop: "1rem",
+                    marginTop: "1.5rem",
                     display: "flex",
-                    gap: "1.5rem",
-                    padding: "0.75rem 1rem",
-                    background: "rgba(255,255,255,0.04)",
-                    borderRadius: "0.6rem",
+                    gap: "2rem",
+                    padding: "1.25rem",
+                    background: "rgba(255,255,255,0.02)",
+                    borderRadius: "0.85rem",
+                    border: "1px solid var(--card-border)",
                 }}>
                     {[
-                        { label: "Repositories", value: githubStats.publicRepos || 0 },
+                        { label: "Repos", value: githubStats.publicRepos || 0 },
                         { label: "Followers", value: githubStats.followers || 0 },
                         { label: "Following", value: githubStats.following || 0 },
                     ].map(({ label, value }) => (
                         <div key={label} style={{ textAlign: "center" }}>
-                            <p style={{ fontSize: "1.1rem", fontWeight: 800, color: "white" }}>{value}</p>
-                            <p style={{ fontSize: "0.72rem", color: "var(--muted)" }}>{label}</p>
+                            <p style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-primary)" }}>{value}</p>
+                            <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", opacity: 0.5 }}>{label}</p>
                         </div>
                     ))}
                 </div>
 
                 {/* Tech Stack */}
                 {primaryStack.length > 0 && (
-                    <div style={{ marginTop: "1rem" }}>
-                        <p style={{ fontSize: "0.72rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "0.5rem" }}>
-                            Tech Stack
+                    <div style={{ marginTop: "1.5rem" }}>
+                        <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.1em", marginBottom: "0.75rem", opacity: 0.4 }}>
+                            Top Stack
                         </p>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                             {primaryStack.map((lang) => (
                                 <span key={lang} style={{
-                                    fontSize: "0.78rem", fontWeight: 600,
-                                    padding: "0.3rem 0.8rem",
-                                    borderRadius: "999px",
-                                    background: `${LANG_COLORS[lang] || "#e8614a"}22`,
-                                    color: LANG_COLORS[lang] || "#e8614a",
-                                    border: `1px solid ${LANG_COLORS[lang] || "#e8614a"}44`,
+                                    fontSize: "0.8rem", fontWeight: 600,
+                                    padding: "0.35rem 0.85rem",
+                                    borderRadius: "0.6rem",
+                                    background: "rgba(255,255,255,0.03)",
+                                    color: LANG_COLORS[lang] || "var(--accent-pink)",
+                                    border: `1px solid ${(LANG_COLORS[lang] || "#FF6B9A") + "22"}`,
                                 }}>{lang}</span>
                             ))}
                         </div>
@@ -157,14 +146,15 @@ export default function ProfileHeader({ avatarUrl, name, username, bio, location
 
                 {/* Intent badge */}
                 {intentMode && (
-                    <div style={{ marginTop: "1rem" }}>
+                    <div style={{ marginTop: "1.5rem" }}>
                         <span style={{
-                            fontSize: "0.78rem", fontWeight: 600,
-                            padding: "0.3rem 0.85rem",
-                            borderRadius: "999px",
-                            background: "rgba(232,97,74,0.12)",
-                            color: "#e8614a",
-                            border: "1px solid rgba(232,97,74,0.3)",
+                            fontSize: "0.8rem", fontWeight: 700,
+                            padding: "0.4rem 1rem",
+                            borderRadius: "0.6rem",
+                            background: "rgba(255,107,154,0.08)",
+                            color: "var(--accent-pink)",
+                            border: "1px solid rgba(255,107,154,0.2)",
+                            boxShadow: "0 0 15px var(--accent-glow)",
                         }}>
                             {INTENT_LABELS[intentMode] || intentMode}
                         </span>
