@@ -49,6 +49,7 @@ router.post("/:matchId", requireAuth, async (req, res) => {
 
         // Emit to socket room
         const io = req.app.get("io");
+        console.log(`📡 Emitting 'new-message' to room ${matchId}: "${message.messageText.substring(0, 20)}..."`);
         io.to(matchId).emit("new-message", message);
 
         res.json(message);

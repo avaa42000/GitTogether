@@ -47,6 +47,9 @@ export default function MatchesPage() {
                                 lastMessage={m.lastMessage}
                                 compatibilityScore={m.compatibilityScore}
                                 index={i}
+                                onUnmatch={() => {
+                                    setMatches(prev => prev.filter(item => item.matchId !== m.matchId));
+                                }}
                             />
                         ))}
                     </div>

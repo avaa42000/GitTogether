@@ -25,13 +25,27 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:3000",
+  "http://localhost:3001"
+].filter(Boolean);
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Temporarily allow everything to rule out CORS as the root cause
+      // In production, we should restrict this, but for deep debugging it's safer
+      console.log("🔍 Incoming Socket Origin:", origin);
+      callback(null, true);
+    },
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket"], // Force WebSocket ONLY to avoid 400 errors on Render/Vercel
 });
+
+console.log("🌐 Socket.io initialized in PERMISSIVE CORS mode with WebSocket-only transport.");
 
 // Attach io to app for access in routes
 app.set("io", io);
@@ -61,7 +75,8 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (matchId) => {
     socket.join(matchId);
-    console.log(`🏠 Socket ${socket.id} joined room: ${matchId}`);
+    const roomSize = io.sockets.adapter.rooms.get(matchId)?.size || 0;
+    console.log(`🏠 Socket ${socket.id} joined room: ${matchId}. Total in room: ${roomSize}`);
   });
 
   socket.on("disconnect", () => {

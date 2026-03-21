@@ -12,23 +12,36 @@ router.get("/", requireAuth, async (req, res) => {
             include: { repositories: true },
         });
 
-        // Get all users this user has already swiped
-        const swiped = await prisma.swipe.findMany({
-            where: { swiperId: req.userId },
+        // Get only users this user has liked/superliked (exclude from pool)
+        const excluded = await prisma.swipe.findMany({
+            where: { 
+                swiperId: req.userId,
+                swipeType: { in: ["like", "superlike"] }
+            },
             select: { targetId: true },
         });
-        const swipedIds = swiped.map((s) => s.targetId);
-        swipedIds.push(req.userId); // exclude self
+        const excludedIds = excluded.map((s) => s.targetId);
+        excludedIds.push(req.userId); // exclude self
+
+        console.log(`🔍 Discover for ${req.userId}: Excluded ${excludedIds.length} users (Likes/Self)`);
 
         // Fetch candidate pool
+        const whereClause = {
+            id: { notIn: excludedIds },
+        };
+
+        // Only apply dating filter if in dating mode
+        if (currentUser.intentMode === "dating") {
+            whereClause.hideDating = false;
+        }
+
         const candidates = await prisma.user.findMany({
-            where: {
-                id: { notIn: swipedIds },
-                hideDating: currentUser.intentMode === "dating" ? false : undefined,
-            },
+            where: whereClause,
             include: { repositories: true },
-            take: 50,
+            take: 100, // Increase pool size for better discovery
         });
+
+        console.log(`✅ Found ${candidates.length} potential candidates`);
 
         // Score and sort
         const scored = candidates
