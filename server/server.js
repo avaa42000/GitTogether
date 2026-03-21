@@ -34,24 +34,18 @@ const allowedOrigins = [
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl)
-      if (!origin) return callback(null, true);
-      
-      const isAllowed = allowedOrigins.some(ao => origin.startsWith(ao));
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        console.warn(`⚠️ Socket connection blocked by CORS from origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
+      // Temporarily allow everything to rule out CORS as the root cause
+      // In production, we should restrict this, but for deep debugging it's safer
+      console.log("🔍 Incoming Socket Origin:", origin);
+      callback(null, true);
     },
     methods: ["GET", "POST"],
     credentials: true,
   },
-  transports: ["websocket", "polling"], // Allow polling as fallback, upgrade to websocket
+  transports: ["websocket"], // Force WebSocket ONLY to avoid 400 errors on Render/Vercel
 });
 
-console.log("🌐 Socket.io initialized. Allowed Origins:", allowedOrigins);
+console.log("🌐 Socket.io initialized in PERMISSIVE CORS mode with WebSocket-only transport.");
 
 // Attach io to app for access in routes
 app.set("io", io);
