@@ -8,24 +8,81 @@ interface ActionButtonsProps {
     accentColor?: string;
 }
 
-export default function ActionButtons({ onPass, onSuperLike, onLike, accentColor = "#4ade80" }: ActionButtonsProps) {
+export default function ActionButtons({ onPass, onSuperLike, onLike }: ActionButtonsProps) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "1.75rem" }}>
             {/* Pass */}
-            <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.88 }} onClick={onPass}
-                style={{ width: 56, height: 56, borderRadius: "50%", border: "1px solid rgba(232,97,74,0.35)", background: "rgba(232,97,74,0.08)", color: "#e8614a", fontSize: "1.4rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.button 
+                whileHover={{ scale: 1.1, translateY: -2 }} 
+                whileTap={{ scale: 0.9 }} 
+                onClick={onPass}
+                style={{ 
+                    width: 60, height: 60, 
+                    borderRadius: "50%", 
+                    border: "1px solid var(--card-border)", 
+                    background: "var(--bg-card)", 
+                    color: "var(--text-secondary)", 
+                    fontSize: "1.4rem", 
+                    cursor: "pointer", 
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: "var(--soft-shadow)",
+                    transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#FF4D4D")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
+            >
                 ✕
             </motion.button>
 
             {/* SuperLike */}
-            <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.88 }} onClick={onSuperLike}
-                style={{ width: 48, height: 48, borderRadius: "50%", border: "1px solid rgba(255,195,80,0.35)", background: "rgba(255,195,80,0.08)", color: "#ffc350", fontSize: "1.2rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.button 
+                whileHover={{ scale: 1.1, translateY: -2 }} 
+                whileTap={{ scale: 0.9 }} 
+                onClick={onSuperLike}
+                style={{ 
+                    width: 50, height: 50, 
+                    borderRadius: "50%", 
+                    border: "1px solid var(--card-border)", 
+                    background: "var(--bg-card)", 
+                    color: "var(--text-secondary)", 
+                    fontSize: "1.2rem", 
+                    cursor: "pointer", 
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: "var(--soft-shadow)",
+                    transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#4DABFF")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-secondary)")}
+            >
                 ⭐
             </motion.button>
 
             {/* Like */}
-            <motion.button whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.88 }} onClick={onLike}
-                style={{ width: 56, height: 56, borderRadius: "50%", border: "1px solid rgba(74,222,128,0.35)", background: "rgba(74,222,128,0.08)", color: "#4ade80", fontSize: "1.4rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <motion.button 
+                whileHover={{ scale: 1.1, translateY: -2 }} 
+                whileTap={{ scale: 0.9 }} 
+                onClick={onLike}
+                style={{ 
+                    width: 60, height: 60, 
+                    borderRadius: "50%", 
+                    border: "1px solid var(--accent-pink)", 
+                    background: "var(--bg-card)", 
+                    color: "var(--accent-pink)", 
+                    fontSize: "1.6rem", 
+                    cursor: "pointer", 
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    boxShadow: "0 0 20px var(--accent-glow)",
+                    transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255,107,154,0.05)";
+                    e.currentTarget.style.boxShadow = "0 0 30px var(--accent-glow)";
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "var(--bg-card)";
+                    e.currentTarget.style.boxShadow = "0 0 20px var(--accent-glow)";
+                }}
+            >
                 ♥
             </motion.button>
         </div>

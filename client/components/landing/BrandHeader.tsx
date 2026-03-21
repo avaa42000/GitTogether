@@ -1,5 +1,4 @@
 "use client";
-// Landing page brand header — "GitTogether" + subtitle
 import { motion } from "framer-motion";
 
 export default function BrandHeader() {
@@ -13,13 +12,14 @@ export default function BrandHeader() {
             <h1 style={{
                 fontSize: "2.8rem",
                 fontWeight: 800,
-                color: "#e8614a",
+                color: "var(--accent-pink)",
                 marginBottom: "0.4rem",
                 letterSpacing: "-0.02em",
+                filter: "drop-shadow(0 2px 8px rgba(255,107,154,0.2))"
             }}>
                 GitTogether
             </h1>
-            <p style={{ color: "rgba(255,255,255,0.42)", fontSize: "0.9rem" }}>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", fontWeight: 500, opacity: 0.8 }}>
                 Connect with developers who code your language
             </p>
         </motion.div>

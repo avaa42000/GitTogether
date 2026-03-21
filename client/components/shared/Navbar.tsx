@@ -13,66 +13,77 @@ export default function Navbar() {
     const pathname = usePathname();
 
     return (
-        <nav style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 50,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0.75rem 1.25rem",
-            background: "rgba(20,10,14,0.88)",
-            backdropFilter: "blur(16px)",
-            borderBottom: "1px solid var(--border)",
+        <nav className="gt-nav" style={{
+            background: "var(--bg-nav)",
+            borderBottom: "1px solid var(--card-border)",
         }}>
             {/* Logo */}
             <Link href="/discover" style={{ display: "flex", alignItems: "center", gap: "0.5rem", textDecoration: "none" }}>
-                <span style={{ fontSize: "1.2rem" }}>🔗</span>
-                <span style={{ fontSize: "1.1rem", fontWeight: 800, color: "#e8614a" }}>GitTogether</span>
+                <span style={{ fontSize: "1.2rem", filter: "drop-shadow(0 2px 4px rgba(255,107,154,0.3))" }}>🔗</span>
+                <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--accent-pink)", letterSpacing: "-0.02em" }}>GitTogether</span>
             </Link>
 
             {/* Nav links */}
-            <div style={{ display: "flex", gap: "0.25rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
                 {LINKS.map((l) => (
                     <Link key={l.href} href={l.href} style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "0.4rem",
-                        padding: "0.45rem 0.85rem",
-                        borderRadius: "0.6rem",
+                        gap: "0.5rem",
+                        padding: "0.5rem 1rem",
+                        borderRadius: "0.75rem",
                         textDecoration: "none",
-                        fontSize: "0.875rem",
-                        fontWeight: 500,
-                        background: pathname === l.href ? "rgba(232,97,74,0.12)" : "transparent",
-                        color: pathname === l.href ? "#e8614a" : "var(--muted)",
-                        transition: "all 0.15s",
+                        fontSize: "0.9rem",
+                        fontWeight: 600,
+                        background: pathname === l.href ? "rgba(255,107,154,0.08)" : "transparent",
+                        color: pathname === l.href ? "var(--accent-pink)" : "var(--text-secondary)",
+                        transition: "all 0.2s ease",
+                        boxShadow: pathname === l.href ? "0 0 15px rgba(255,107,154,0.1)" : "none",
                     }}>
-                        <span>{l.icon}</span>
+                        <span style={{ opacity: pathname === l.href ? 1 : 0.6 }}>{l.icon}</span>
                         <span>{l.label}</span>
                     </Link>
                 ))}
             </div>
 
             {/* Avatar + sign out */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 {session?.user?.image && (
                     <Link href="/profile" title="View Profile">
                         <img src={session.user.image} alt=""
                             style={{
-                                width: 32, height: 32,
-                                borderRadius: "0.5rem",
-                                border: "1px solid rgba(232,97,74,0.25)",
+                                width: 36, height: 36,
+                                borderRadius: "0.75rem",
+                                border: "1px solid var(--card-border)",
                                 cursor: "pointer",
-                                transition: "border-color 0.15s",
+                                transition: "all 0.2s ease",
+                                boxShadow: "var(--soft-shadow)",
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#e8614a")}
-                            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(232,97,74,0.25)")}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = "var(--accent-pink)";
+                                e.currentTarget.style.boxShadow = "0 0 10px var(--accent-glow)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = "var(--card-border)";
+                                e.currentTarget.style.boxShadow = "var(--soft-shadow)";
+                            }}
                         />
                     </Link>
                 )}
                 <button
                     onClick={() => { localStorage.clear(); sessionStorage.clear(); signOut({ callbackUrl: "/" }); }}
-                    style={{ background: "none", border: "none", color: "var(--muted)", fontSize: "0.8rem", cursor: "pointer" }}
+                    style={{ 
+                        background: "none", 
+                        border: "none", 
+                        color: "var(--text-secondary)", 
+                        fontSize: "0.85rem", 
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        opacity: 0.7,
+                        transition: "opacity 0.2s",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.7")}
                 >
                     Sign out
                 </button>
