@@ -49,10 +49,17 @@ export default function ChatPage() {
             fetchMessages();
 
             // Socket setup
+            console.log("🔌 Attempting socket connection to room:", matchId);
             socket.connect();
-            socket.emit("join-room", matchId);
+
+            // Join room once connected
+            socket.on("connect", () => {
+                console.log("📝 Joining room:", matchId);
+                socket.emit("join-room", matchId);
+            });
 
             socket.on("new-message", (newMsg) => {
+                console.log("📩 New real-time message received:", newMsg);
                 setMessages((prev) => {
                     if (prev.find(m => m.id === newMsg.id)) return prev;
                     return [...prev, newMsg];
@@ -61,6 +68,8 @@ export default function ChatPage() {
             });
 
             return () => {
+                console.log("🔌 Cleaning up socket for room:", matchId);
+                socket.off("connect");
                 socket.off("new-message");
                 socket.disconnect();
             };

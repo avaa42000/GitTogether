@@ -31,7 +31,10 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
+  transports: ["websocket"], // Force WebSocket for production stability
 });
+
+console.log("🌐 Socket.io configured with origin:", process.env.CLIENT_URL || "http://localhost:3000");
 
 // Attach io to app for access in routes
 app.set("io", io);
